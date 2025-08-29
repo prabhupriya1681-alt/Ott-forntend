@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn { @apply px-3 py-2 rounded-xl bg-fuchsia-600 hover:bg-fuchsia-700 disabled:opacity-50; }
+.card { @apply bg-neutral-900 rounded-2xl p-3 shadow; }
+.input { @apply bg-neutral-800 rounded-lg p-2 outline-none w-full; }
