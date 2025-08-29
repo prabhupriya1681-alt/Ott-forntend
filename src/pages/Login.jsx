@@ -1,32 +1,53 @@
-import { useState } from 'react'
-import { login } from '../api'
-import { saveAuth } from '../utils/auth'
+import React, { useState } from "react";
+import axios from "axios";
 
-export default function Login(){
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  async function handleSubmit(e){
-    e.preventDefault()
-    setLoading(true); setError('')
+  const handleLogin = async (e) => {
+    e.preventDefault();
     try {
-      const { data } = await login({ email, password })
-      saveAuth(data)
-      window.location.href = '/browse'
-    } catch (e) {
-      setError(e?.response?.data?.message || 'Login failed')
-    } finally { setLoading(false) }
-  }
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/login`,
+        { email, password }
+      );
+
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+        console.log("Login success:", res.data);
+        // success logic → navigate dashboard or home
+      } else {
+        setError("Login failed");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Login failed");
+    }
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-sm mx-auto mt-10 space-y-3">
-      <h2 className="text-2xl font-semibold">Login</h2>
-      {error && <div className="p-2 bg-red-900/40 rounded">{error}</div>}
-      <input className="input" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} />
-      <input className="input" placeholder="Password" type="password" value={password} onChange={e=>setPassword(e.target.value)} />
-      <button className="btn w-full" disabled={loading}>{loading? 'Logging in...' : 'Login'}</button>
-    </form>
-  )
+    <div>
+      <h2>Login</h2>
+      <form onSubmit={handleLogin}>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit">Login</button>
+      </form>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+    </div>
+  );
 }
+
+export default Login;
