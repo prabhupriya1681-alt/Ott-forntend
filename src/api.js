@@ -12,7 +12,13 @@ api.interceptors.request.use((config) => {
 })
 
 // Auth
-export const register = (data) => api.post('/auth/register', data)
+export const register = (data) => {
+  return api.post('/auth/register', {
+    name: data.username,   // backend expects "name"
+    email: data.email,
+    password: data.password
+  })
+}
 export const login = (data) => api.post('/auth/login', data)
 export const getProfile = () => api.get('/auth/me')
 
